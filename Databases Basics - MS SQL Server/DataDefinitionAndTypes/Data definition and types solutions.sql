@@ -173,3 +173,313 @@ INSERT INTO Movies (Title, DirectorId, CopyrightYear, Length, GenreId, CategoryI
 ('Pulp Fictioc', 3, '1994', 154, 5, 2, 8.9, NULL),
 ('Saving private Ryan', 5, '1998', 169, 5, 3, 8.6, NULL),
 ('Escape from New York', 2, '1981', 99, 4, 4, 7.6, 'Old but gold')
+
+-- 14. Car Rental database
+
+CREATE DATABASE CarRental
+
+CREATE TABLE Categories (
+	Id INT PRIMARY KEY IDENTITY NOT NULL,
+	CategoryName NVARCHAR(50) NOT NULL,
+	DailyRate FLOAT(2) NOT NULL,
+	WeeklyRate FLOAT(2) NOT NULL,
+	MonthlyRate FLOAT(2) NOT NULL,
+	WeekendRate FLOAT(2) NOT NULL
+)
+
+INSERT INTO Categories (CategoryName, DailyRate, WeeklyRate, MonthlyRate, WeekendRate) VALUES
+('Sports', 8.8, 44, 176, 17.6),
+('Economy', 2.5, 12.5, 50, 5),
+('Luxury', 6, 30, 120, 12)
+
+CREATE TABLE Cars (
+	Id INT PRIMARY KEY IDENTITY NOT NULL,
+	PlateNumber VARCHAR(8),
+	Manufacturer VARCHAR(20),
+	Model VARCHAR(20),
+	CarYear DATE,
+	CategoryId INT FOREIGN KEY REFERENCES Categories(Id),
+	Doors INT NOT NULL,
+	Picture VARBINARY(max),
+	Condition NVARCHAR(50),
+	Available BIT
+)
+
+INSERT INTO Cars (PlateNumber, Manufacturer, Model, CarYear, CategoryId, Doors, Picture, Condition, Available) VALUES
+('PB123400', 'Volkswagen', 'Polo', '1996', 2, 2, NULL, 'Good', 0),
+('CA000000', 'Lamborghini', 'Aventador', '2017', 1, 2, NULL, 'Excellent', 1),
+('C5566HA', 'Audi', 'A5', '2012', 3, 4, NULL, NULL, NULL)
+
+CREATE TABLE Employees (
+	Id INT PRIMARY KEY IDENTITY NOT NULL,
+	FirstName NVARCHAR(50) NOT NULL,
+	LastName NVARCHAR(50) NOT NULL,
+	Title NVARCHAR(30),
+	Notes NVARCHAR(max)
+)
+
+INSERT INTO Employees (FirstName, LastName, Title, Notes) VALUES
+('Stamat', 'Stamatov', 'CEO', NULL),
+('Minka', 'Minkova', 'Secretary', NULL),
+('Chocho', 'Chochev', NULL, NULL)
+
+CREATE TABLE Customers (
+	Id INT PRIMARY KEY IDENTITY NOT NULL,
+	DriverLicenseNumber BIGINT,
+	FullName NVARCHAR(50) NOT NULL,
+	Address NVARCHAR(50),
+	City NVARCHAR(20),
+	ZipCode INT,
+	Notes NVARCHAR(max)
+)
+
+INSERT INTO Customers (DriverLicenseNumber, FullName, Address, City, ZipCode, Notes) VALUES
+(123456789, 'Kichka Bodurova', NULL, NULL , NULL, NULL),
+(88888888888, 'Asparuh Asparuhov', NULL, 'Plovdiv', 4000, NULL),
+(9253455224, 'Kolio Kolev', NULL, 'Sofia', 1000, NULL)
+
+CREATE TABLE RentalOrders (
+	Id INT PRIMARY KEY IDENTITY NOT NULL,
+	EmployeeId INT FOREIGN KEY REFERENCES Employees(Id),
+	CustomerId INT FOREIGN KEY REFERENCES Customers(Id),
+	CarId INT FOREIGN KEY REFERENCES Cars(Id),
+	TankLevel INT,
+	KilometrageStart INT,
+	KilometrageEnd INT,
+	TotalKilometrage INT,
+	StartDate DATE,
+	EndDate DATE,
+	TotalDays AS DATEDIFF(DAY, StartDate, EndDate),
+	RateApplied FLOAT(2),
+	TaxRate DECIMAL(5, 2),
+	OrderStatus NVARCHAR(50),
+	Notes NVARCHAR(max)
+)
+
+INSERT INTO RentalOrders(EmployeeId, CustomerId, CarId, TankLevel, KilometrageStart, KilometrageEnd, 
+TotalKilometrage, StartDate, EndDate, RateApplied, TaxRate, OrderStatus, Notes) VALUES
+(1, 1, 1, 50, 11111, 44444, 33333, '01-01-1996', '12-12-2000', 5.5, 100.50, 'Not ordered', NULL),
+(2, 2, 2, 60, 22222, 55555, 33333, '01-01-2017', '12-12-2017', 10, 200.80, 'Ordered', NULL),
+(3, 3, 3, 70, 33333, 66666, 33333, '01-01-2012', '12-12-2015', 7.5, 180.55, 'Bought', NULL)
+
+-- 15. Hotel database
+
+CREATE DATABASE Hotel
+
+CREATE TABLE Employees (
+	Id INT PRIMARY KEY IDENTITY NOT NULL,
+	FirstName NVARCHAR(50) NOT NULL,
+	LastName NVARCHAR(50) NOT NULL,
+	Title NVARCHAR(30),
+	Notes NVARCHAR(max)
+)
+
+INSERT INTO Employees (FirstName, LastName, Title, Notes) VALUES
+('Stamat', 'Stamatov', 'Manager', 'THE BOSS'),
+('Minka', 'Minkova', 'Maid', 'Cleaning duty'),
+('Chocho', 'Chochev', NULL, NULL)
+
+CREATE TABLE Customers (
+	AccountNumber BIGINT UNIQUE NOT NULL,
+	FirstName NVARCHAR(50) NOT NULL,
+	LastName NVARCHAR(50) NOT NULL,
+	PhoneNumber INT,
+	EmergencyName NVARCHAR(50),
+	EmergencyNumber INT,
+	Notes NVARCHAR(max)
+)
+
+INSERT INTO Customers (AccountNumber, FirstName, LastName, 
+PhoneNumber, EmergencyName, EmergencyNumber, Notes) VALUES
+(123456789, 'Stamatcho', 'Stamatchov', 0893336665, NULL, 101, NULL),
+(987654321, 'Minkata', 'Minkovata', 0893336666, NULL, 911, NULL),
+(135792468, 'Goshkata', 'Goshkovata', 0893336667, NULL, 101, NULL)
+
+CREATE TABLE RoomStatus (
+	RoomStatus NVARCHAR(50) PRIMARY KEY NOT NULL,
+	Notes NVARCHAR(max)
+)
+
+INSERT INTO RoomStatus (RoomStatus, Notes) VALUES
+('Available', NULL),
+('Cleaning', NULL),
+('Occupied', NULL)
+
+CREATE TABLE RoomTypes (
+	RoomType NVARCHAR(50) PRIMARY KEY NOT NULL,
+	Notes NVARCHAR(max)
+)
+
+INSERT INTO RoomTypes (RoomType, Notes) VALUES
+('Room for 2', NULL),
+('Apartment', NULL),
+('Room for 2 + child', NULL)
+
+CREATE TABLE BedTypes (
+	BedType NVARCHAR(50) PRIMARY KEY NOT NULL,
+	Notes NVARCHAR(max)
+)
+
+INSERT INTO BedTypes (BedType, Notes) VALUES
+('Duo bed', NULL),
+('Big bed', NULL),
+('Single bed', NULL)
+
+CREATE TABLE Rooms (
+	RoomNumber INT PRIMARY KEY IDENTITY NOT NULL,
+	RoomType NVARCHAR(50) FOREIGN KEY REFERENCES RoomTypes(RoomType),
+	BedType NVARCHAR(50) FOREIGN KEY REFERENCES BedTypes(BedType),
+	Rate FLOAT(2),
+	RoomStatus NVARCHAR(50) FOREIGN KEY REFERENCES RoomStatus(RoomStatus),
+	Notes NVARCHAR(MAX)
+)
+
+INSERT INTO Rooms (RoomType, BedType, Rate, RoomStatus, Notes) VALUES
+('Apartment', 'Big bed', 9.5, 'Available', NULL),
+('Room for 2', 'Duo bed', 8.5, 'Cleaning', NULL),
+('Room for 2 + child', 'Big bed', 9.5, 'Occupied', NULL)
+
+CREATE TABLE Payments (
+	Id INT PRIMARY KEY IDENTITY NOT NULL,
+	EmployeeId INT FOREIGN KEY REFERENCES Employees(Id),
+	PaymentDate DATE,
+	AccountNumber BIGINT FOREIGN KEY REFERENCES Customers(AccountNumber),
+	FirstDateOccupied DATE,
+	LastDateOccupied DATE,
+	TotalDays AS DATEDIFF(DAY, FirstDateOccupied, LastDateOccupied),
+	AmountCharged DECIMAL(5, 2),
+	TaxRate FLOAT(2),
+	TaxAmount FLOAT(2),
+	PaymentTotal DECIMAL(6, 2) NOT NULL,
+	Notes NVARCHAR(max)
+)
+
+INSERT INTO Payments (EmployeeId, PaymentDate, AccountNumber, PaymentTotal) VALUES
+(1, GETDATE(), 123456789, 1050.50),
+(2, GETDATE(), 987654321, 750),
+(3, GETDATE(), 135792468, 880.75)
+
+CREATE TABLE Occupancies (
+	Id INT PRIMARY KEY IDENTITY NOT NULL,
+	EmployeeId INT FOREIGN KEY REFERENCES Employees(Id),
+	DateOccupied DATE,
+	AccountNumber BIGINT FOREIGN KEY REFERENCES Customers(AccountNumber),
+	RoomNumber INT,
+	RateApplied FLOAT(2),
+	PhoneCharge BIT,
+	Notes NVARCHAR(max)
+)
+
+INSERT INTO Occupancies (EmployeeId, DateOccupied, AccountNumber, RoomNumber, RateApplied, PhoneCharge) VALUES
+(1, GETDATE(), 123456789, 55, 5.5, 1),
+(2, GETDATE(), 987654321, 66, 6.5, 0),
+(3, GETDATE(), 135792468, 33, 7.5, 1)
+
+
+-- 16. Create SoftUni database
+
+CREATE DATABASE SoftUni
+
+CREATE TABLE Towns (
+	Id INT PRIMARY KEY IDENTITY NOT NULL,
+	Name NVARCHAR(50)
+)
+
+CREATE TABLE Addresses (
+	Id INT PRIMARY KEY IDENTITY NOT NULL,
+	AddressesText NVARCHAR(100),
+	TownId INT FOREIGN KEY REFERENCES Towns(Id)
+)
+
+CREATE TABLE Departments (
+	Id INT PRIMARY KEY IDENTITY NOT NULL,
+	Name NVARCHAR(50)
+)
+
+CREATE TABLE Employees (
+	Id INT PRIMARY KEY IDENTITY NOT NULL,
+	FirstName NVARCHAR(50) NOT NULL,
+	MiddleName NVARCHAR(50) NOT NULL,
+	LastName NVARCHAR(50) NOT NULL,
+	JobTitle NVARCHAR(50),
+	DepartmentId INT FOREIGN KEY REFERENCES Departments(Id),
+	HireDate DATE,
+	Salary DECIMAL(10, 2),
+	AddressId INT FOREIGN KEY REFERENCES Addresses(Id)
+)
+
+-- 17. Backup database
+
+BACKUP DATABASE Softuni
+	TO DISK = 'E:\PROGRAMMING\Software University\SoftUni\C#\softuni-backup.bak'
+
+DROP DATABASE SoftUni
+
+RESTORE DATABASE SoftUni
+	FROM DISK = 'E:\PROGRAMMING\Software University\SoftUni\C#\softuni-backup.bak'
+
+-- 18. Basic insert
+
+INSERT INTO Towns (Name) VALUES
+('Sofia'),
+('Plovdiv'),
+('Varna'),
+('Burgas')
+
+INSERT INTO Departments (Name) VALUES
+('Engineering'), 
+('Sales'), 
+('Marketing'),
+('Software Development'),
+('Quality Assurance')
+
+INSERT INTO Employees (FirstName, MiddleName, LastName, JobTitle, DepartmentId, HireDate, Salary) VALUES
+('Ivan', 'Ivanov', 'Ivanov', '.NET Developer', 4, '02/01/2013',	3500.00),
+('Petar', 'Petrov', 'Petrov', 'Senior Engineering', 1, '03/02/2004', 4000.00),
+('Maria', 'Petrova', 'Ivanova', 'Intern', 5, '08/28/2016', 525.25),
+('Georgi', 'Teziev', 'Ivanov', 'CEO', 2, '12/09/2007', 3000.00),
+('Peter', 'Pan', 'Pan', 'Intern', 3, '08/28/2016', 599.88)
+
+-- 19. Basic select all fields
+
+SELECT * FROM Towns
+
+SELECT * FROM Departments
+
+SELECT * FROM Employees
+
+-- 20. Basic select all fields and order them
+
+SELECT * FROM Towns ORDER BY Name
+
+SELECT * FROM Departments ORDER BY Name
+
+SELECT * FROM Employees ORDER BY Salary DESC 
+
+-- 21. Basic select some fields
+
+SELECT Name FROM Towns ORDER BY Name
+
+SELECT Name FROM Departments ORDER BY Name
+
+SELECT FirstName, LastName, JobTitle, Salary FROM Employees ORDER BY Salary DESC 
+
+-- 22. Increase employees salary
+
+UPDATE Employees
+SET Salary += Salary * 0.1
+
+SELECT Salary FROM Employees
+
+-- 23. Decrease tax rate
+
+USE Hotel
+
+UPDATE Payments
+SET TaxRate -= TaxRate * 0.03
+
+SELECT TaxRate FROM Payments
+
+-- 24. Delete all records
+
+TRUNCATE TABLE Occupancies
