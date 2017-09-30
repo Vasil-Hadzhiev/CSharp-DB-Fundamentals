@@ -102,3 +102,47 @@ SELECT Username, IpAddress AS [IP Address]
 
 -- 15. Show all games with duration and part of the day
 
+SELECT Name as Game,
+  CASE 
+      WHEN DATEPART(HOUR, Start) BETWEEN 0 AND 11 THEN 'Morning'
+      WHEN DATEPART(HOUR, Start) BETWEEN 12 AND 17 THEN 'Afternoon'
+      WHEN DATEPART(HOUR, Start) BETWEEN 18 AND 23 THEN 'Evening'
+  END AS [Part of the Day],
+  CASE
+      WHEN Duration <= 3 THEN 'Extra Short'
+	  WHEN Duration BETWEEN 4 AND 6 THEN 'Short'
+	  WHEN Duration > 6 THEN 'Long'
+	  ELSE 'Extra Long'
+  END AS [Duration]
+  FROM Games	
+ ORDER By Name,
+          [Duration],
+		  [Part of the Day]
+
+
+-- 16. Orders table
+
+SELECT ProductName, Orderdate,
+DATEADD(DAY, 3, Orderdate) AS [Pay Due],
+DATEADD(MONTH, 1, Orderdate) AS [Delivery Due]
+  FROM Orders
+
+-- 17. People table
+
+CREATE TABLE People (
+	Id INT PRIMARY KEY IDENTITY,
+	Name NVARCHAR(50),
+	Birthdate DATETIME
+)
+	
+INSERT INTO People (Name,Birthdate) VALUES
+('Victor', '2000-12-07 00:00:00.000'),
+('Steven', '1992-09-10 00:00:00.000'),
+('Stephen', '1910-09-19 00:00:00.000')
+
+SELECT Name,
+       DATEDIFF(YEAR, Birthdate, GETDATE()) AS [Age in Years],
+	   DATEDIFF(MONTH, Birthdate, GETDATE()) AS [Age in Months],
+	   DATEDIFF(DAY, Birthdate, GETDATE()) AS [Age in Days],
+	   DATEDIFF(MINUTE, Birthdate, GETDATE()) AS [Age in Minutes]
+  FROM People
