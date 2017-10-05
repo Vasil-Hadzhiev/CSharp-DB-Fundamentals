@@ -1,10 +1,12 @@
 -- 01. Records count
 
-SELECT COUNT(*) FROM WizzardDeposits
+SELECT COUNT(*) 
+  FROM WizzardDeposits
 
 -- 02. Longest magic wand
 
-SELECT MAX(MagicWandSize) FROM WizzardDeposits
+SELECT MAX(MagicWandSize) 
+  FROM WizzardDeposits
 
 -- 03. Longest magic wand per deposit groups
 
@@ -52,7 +54,7 @@ SELECT DepositGroup,
 	   MIN(DepositCharge) AS [MinDepositCharge]
   FROM WizzardDeposits
  GROUP BY DepositGroup, 
-          MagicWandCreator
+         MagicWandCreator
  ORDER BY MagicWandCreator,
           DepositGroup
 
@@ -96,6 +98,13 @@ SELECT DepositGroup,
           IsDepositExpired
 
 -- 12. Rich wizzard, poor wizzard
+
+SELECT SUM(SumDifference) 
+FROM
+(
+	SELECT DepositAmount - LEAD(DepositAmount) OVER(ORDER BY Id ASC) AS SumDifference
+	FROM WizzardDeposits
+) AS Diffs
 
 -- 13. Departments total salaries
 
@@ -152,6 +161,17 @@ SELECT COUNT(Salary) AS [Count]
 
 -- 18. Third highest salary
 
-
+SELECT DepartmentID,
+       Salary
+FROM
+( 
+	SELECT DepartmentID,
+		   Salary,
+           DENSE_RANK() OVER(PARTITION BY DepartmentID ORDER BY Salary DESC) AS [Rank]
+    FROM Employees
+    GROUP BY DepartmentID,
+             Salary
+) AS RankedSalaries
+WHERE [Rank] = 3
 
 
