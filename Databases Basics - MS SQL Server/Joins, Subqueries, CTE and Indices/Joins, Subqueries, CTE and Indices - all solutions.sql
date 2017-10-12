@@ -93,7 +93,85 @@ INNER JOIN Departments AS d ON d.DepartmentID = e.DepartmentID
 ORDER BY e.EmployeeID
 
 
+-- 11. Min average salary
 
+SELECT MIN(m.Salary) AS [MinAverageSalary]
+FROM (
+SELECT AVG(e.Salary) AS [Salary]
+FROM Employees AS e
+GROUP BY e.DepartmentID
+) AS m
+
+-- 12. Highest peaks in bulgaria
+
+SELECT mc.CountryCode, MountainRange, PeakName, Elevation
+FROM MountainsCountries AS mc
+INNER JOIN Mountains AS m ON m.Id = mc.MountainId
+INNER JOIN Peaks AS p ON p.MountainId = mc.MountainId
+WHERE mc.CountryCode = 'BG' AND p.Elevation > 2835
+ORDER BY p.Elevation DESC
+
+-- 13. Count mountain ranges
+
+SELECT mc.CountryCode, COUNT(m.MountainRange) AS [MountainRanges]
+FROM MountainsCountries AS mc
+INNER JOIN Mountains AS m ON m.Id = mc.MountainId
+WHERE mc.CountryCode IN('US', 'RU', 'BG')
+GROUP BY mc.CountryCode
+
+-- 14. Countries with rivers
+
+SELECT TOP 5 c.CountryName, RiverName
+FROM Countries AS c
+LEFT JOIN CountriesRivers AS cr ON cr.CountryCode = c.CountryCode
+LEFT JOIN Rivers AS r ON r.Id = cr.RiverId
+INNER JOIN Continents AS con ON con.ContinentCode = c.ContinentCode
+WHERE con.ContinentCode = 
+(
+SELECT ContinentCode 
+FROM Continents
+WHERE ContinentName = 'Africa'
+)
+ORDER BY c.CountryName
+
+-- 15. Continents and currencies
+
+SELECT ContinentCode, CurrencyCode, CurrencyUsage
+FROM (
+	SELECT ContinentCode, CurrencyCode, CurrencyUsage,
+	DENSE_RANK() OVER(PARTITION BY(ContinentCode) 
+	ORDER BY CurrencyUsage DESC) AS [Rank]
+		FROM (
+			SELECT ContinentCode, CurrencyCode, COUNT(CurrencyCode) 
+			AS [CurrencyUsage]
+			FROM Countries
+			GROUP BY CurrencyCode, ContinentCode) 
+			AS Currencies) 
+			AS RankedCurrencies
+WHERE [Rank] = 1 AND CurrencyUsage > 1
+ORDER BY ContinentCode
+
+-- 16. Countries without mountains
+
+SELECT COUNT(CountryCode) AS [CountryCode]
+FROM Countries
+WHERE CountryCode NOT IN (SELECT CountryCode FROM MountainsCountries)
+
+-- 17. Highest peak and longest river by country
+
+SELECT TOP 5 
+		c.CountryName,
+		MAX(p.Elevation) AS [HighestPeakElevation],
+		MAX(r.Length) AS [LongestRiverLength]
+FROM Countries AS c
+LEFT JOIN MountainsCountries AS mc ON mc.CountryCode = c.CountryCode
+LEFT JOIN Peaks AS p ON p.MountainId = mc.MountainId
+LEFT JOIN CountriesRivers AS cr ON cr.CountryCode = c.CountryCode
+LEFT JOIN Rivers AS r ON r.Id = cr.RiverId
+GROUP BY CountryName
+ORDER BY MAX(p.Elevation) DESC, 
+         MAX(r.Length) DESC, 
+		 c.CountryName ASC
 
 
 
