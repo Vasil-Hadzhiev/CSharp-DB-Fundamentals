@@ -200,7 +200,9 @@ FROM (
 		FROM Countries AS c
 		LEFT JOIN MountainsCountries AS mc ON mc.CountryCode = c.CountryCode
 		LEFT JOIN Mountains AS m ON m.Id = mc.MountainId
-		LEFT JOIN Peaks AS p ON p.MountainId = m.Id) AS TopPeaks) AS RankedPeaks
+		LEFT JOIN Peaks AS p ON p.MountainId = m.Id) 
+		AS TopPeaks) 
+		AS RankedPeaks
 		WHERE [Rank] = 1
 		ORDER BY CountryName,
 		         [Highest Peak Name]
