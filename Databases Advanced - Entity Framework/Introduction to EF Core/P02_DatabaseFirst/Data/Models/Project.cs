@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace P02_DatabaseFirst.Data.Models
+﻿namespace P02_DatabaseFirst.Data.Models
 {
+    using System;
+    using System.Collections.Generic;
+
     public partial class Project
     {
         public Project()

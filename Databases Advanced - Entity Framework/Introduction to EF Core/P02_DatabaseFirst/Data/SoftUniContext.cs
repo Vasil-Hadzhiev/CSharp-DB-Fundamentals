@@ -1,10 +1,8 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
-using P02_DatabaseFirst.Data.Models;
-
-namespace P02_DatabaseFirst.Data
+﻿namespace P02_DatabaseFirst.Data
 {
+    using Microsoft.EntityFrameworkCore;
+    using P02_DatabaseFirst.Data.Models;
+
     public partial class SoftUniContext : DbContext
     {
         public virtual DbSet<Address> Addresses { get; set; }

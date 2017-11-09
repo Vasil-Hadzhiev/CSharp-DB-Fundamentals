@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace P02_DatabaseFirst.Data.Models
+﻿namespace P02_DatabaseFirst.Data.Models
 {
+    using System.Collections.Generic;
+
     public partial class Town
     {
         public Town()
