@@ -1,8 +1,6 @@
 ﻿namespace HospitalStartUp
 {
-    using P01_HospitalDatabase.Data;
     using P01_HospitalDatabase.Initializer;
-    using System;
 
     public class StartUp
     {

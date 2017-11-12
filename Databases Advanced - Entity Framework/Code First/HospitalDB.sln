@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27004.2006
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "P01_HospitalDatabase", "P01_HospitalDatabase\P01_HospitalDatabase.csproj", "{7F4884D3-0647-4E8E-B0B9-8C7BE373E971}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "P01_HospitalDatabase", "P01_HospitalDatabase\P01_HospitalDatabase.csproj", "{7F4884D3-0647-4E8E-B0B9-8C7BE373E971}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HospitalStartUp", "HospitalStartUp\HospitalStartUp.csproj", "{3577FD1E-8413-47A3-B750-3A897D2B8A9C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HospitalStartUp", "HospitalStartUp\HospitalStartUp.csproj", "{3577FD1E-8413-47A3-B750-3A897D2B8A9C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HospitalDatabaseInitializer", "HospitalDatabaseInitializer\HospitalDatabaseInitializer.csproj", "{F480B002-233F-4066-98D4-0C73CCA6C0D5}"
 EndProject
