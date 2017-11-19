@@ -7,7 +7,7 @@
         public Color()
         {
             this.PrimaryKitTeams = new List<Team>();
-            this.SecondaryKitTeams = new List<Team>();  
+            this.SecondaryKitTeams = new List<Team>();
         }
 
         public int ColorId { get; set; }

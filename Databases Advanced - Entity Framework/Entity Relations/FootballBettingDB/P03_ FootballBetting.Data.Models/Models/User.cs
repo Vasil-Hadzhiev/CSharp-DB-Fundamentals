@@ -6,7 +6,7 @@
     {
         public User()
         {
-            this.Bets = new HashSet<Bet>();
+            this.Bets = new List<Bet>();
         }
 
         public int UserId { get; set; }
