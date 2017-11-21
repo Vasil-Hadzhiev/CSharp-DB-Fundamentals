@@ -2,7 +2,7 @@
 {
     public class Configuration
     {
-        public const string ConnectionString = 
+        public const string ConnectionString =
             @"Server=VASIL\SQLEXPRESS;Database=BillsPaymentSystem;Integrated Security=True;";
     }
 }
