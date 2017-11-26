@@ -31,7 +31,7 @@
             //For problem 10
             //var length = int.Parse(Console.ReadLine());
 
-            var result = string.Empty;
+            //var result = string.Empty;
 
             using (var db = new BookShopContext())
             {
@@ -81,12 +81,11 @@
                 //IncreasePrices(db);
 
                 //Problem 15
-                var removedCount = RemoveBooks(db);
-                Console.WriteLine($"{removedCount} books were deleted");
+                //var removedCount = RemoveBooks(db);
             }
         }
 
-        public static int RemoveBooks(BookShopContext db)
+        private static int RemoveBooks(BookShopContext db)
         {
             var books = db.Books
                 .Where(b => b.Copies < 4200)
