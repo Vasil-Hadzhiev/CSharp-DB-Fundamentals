@@ -71,8 +71,105 @@
                 //Problem 11
                 //result = CountCopiesByAuthor(db);
 
-                Console.WriteLine(result);
+                //Problem 12
+                //result = GetTotalProfitByCategory(db);
+
+                //Problem 13
+                //result = GetMostRecentBooks(db);
+
+                //Problem 14
+                //IncreasePrices(db);
+
+                //Problem 15
+                var removedCount = RemoveBooks(db);
+                Console.WriteLine($"{removedCount} books were deleted");
             }
+        }
+
+        public static int RemoveBooks(BookShopContext db)
+        {
+            var books = db.Books
+                .Where(b => b.Copies < 4200)
+                .ToList();
+
+            db.Books.RemoveRange(books);
+            db.SaveChanges();
+
+            var removedCount = books.Count;
+
+            return removedCount;
+        }
+
+        private static void IncreasePrices(BookShopContext db)
+        {
+            var books = db.Books
+                .Where(b => b.ReleaseDate.Value.Year < 2010)
+                .ToList();
+
+            foreach (var book in books)
+            {
+                book.Price += 5m;
+            }
+
+            db.SaveChanges();
+        }
+
+        private static string GetMostRecentBooks(BookShopContext db)
+        {
+            var categories = db.Categories
+                .Select(c => new
+                {
+                    c.Name,
+                    TotalBookCount = c.CategoryBooks.Count(),
+                    Books = c.CategoryBooks
+                        .Select(cb => new
+                        {
+                            cb.Book.Title,
+                            cb.Book.ReleaseDate
+                        })
+                        .OrderByDescending(b => b.ReleaseDate)
+                        .Take(3)
+                        .ToList()
+                })
+                .OrderByDescending(c => c.TotalBookCount)
+                .ThenBy(c => c.Name)
+                .ToList();
+
+            var sb = new StringBuilder();
+
+            foreach (var category in categories)
+            {
+                sb.AppendLine($"--{category.Name}");
+
+                foreach (var book in category.Books)
+                {
+                    sb.AppendLine($"{book.Title} ({Convert.ToDateTime(book.ReleaseDate).Year})");
+                }
+            }
+
+            return sb.ToString().Trim();
+        }
+
+        private static string GetTotalProfitByCategory(BookShopContext db)
+        {
+            var categories = db.Categories
+                .Select(c => new
+                {
+                    c.Name,
+                    TotalProfit = c.CategoryBooks.Sum(cb => cb.Book.Price * cb.Book.Copies)
+                })
+                .OrderByDescending(c => c.TotalProfit)
+                .ThenBy(c => c.Name)
+                .ToList();
+
+            var sb = new StringBuilder();
+
+            foreach (var category in categories)
+            {
+                sb.AppendLine($"{category.Name} ${category.TotalProfit:f2}");
+            }
+
+            return sb.ToString().Trim();
         }
 
         private static string CountCopiesByAuthor(BookShopContext db)
