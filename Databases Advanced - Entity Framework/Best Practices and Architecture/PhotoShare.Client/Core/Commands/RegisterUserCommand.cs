@@ -15,14 +15,14 @@
             var repeatPassword = data[2];
             var email = data[3];
 
-            if (password != repeatPassword)
-            {
-                throw new ArgumentException("Passwords do not match!");
-            }
-
             if (context.Users.Any(u => u.Username == username))
             {
                 throw new InvalidOperationException($"Username {username} is already taken!");
+            }
+
+            if (password != repeatPassword)
+            {
+                throw new ArgumentException("Passwords do not match!");
             }
 
             var user = new User

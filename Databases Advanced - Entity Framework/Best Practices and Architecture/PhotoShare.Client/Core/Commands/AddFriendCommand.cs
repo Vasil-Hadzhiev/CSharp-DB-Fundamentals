@@ -23,7 +23,7 @@
 
             if (sender == null)
             {
-                throw new ArgumentException($"{senderUsername} not found!");
+                throw new ArgumentException($"User {senderUsername} not found!");
             }
 
             var receiver = context.Users
@@ -35,7 +35,7 @@
 
             if (receiver == null)
             {
-                throw new ArgumentException($"{receiverUsername} not found!");
+                throw new ArgumentException($"User {receiverUsername} not found!");
             }
 
             if (sender.FriendsAdded.Any(fa => fa.Friend.Username == receiverUsername))
