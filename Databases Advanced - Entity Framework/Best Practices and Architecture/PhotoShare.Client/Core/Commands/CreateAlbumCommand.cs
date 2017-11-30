@@ -11,6 +11,11 @@
         // CreateAlbum <username> <albumTitle> <BgColor> <tag1> <tag2>...<tagN>
         public override string Execute(string[] data, PhotoShareContext context)
         {
+            if (Session.User == null)
+            {
+                throw new InvalidOperationException("Invalid credentials!");
+            }
+
             var username = data[0];
             var albumTitle = data[1];
             var isColorValid = Enum.TryParse(data[2], true, out Color color);
@@ -26,6 +31,11 @@
                 throw new ArgumentException($"User {username} not found!");
             }
 
+            if (!Checker.IsUserLoggedOn(currentUser))
+            {
+                throw new InvalidOperationException("Invalid credentials!");
+            }
+
             if (context.Albums.Any(a => a.Name == albumTitle))
             {
                 throw new ArgumentException($"Album {albumTitle} exists!");
@@ -35,11 +45,6 @@
             {
                 throw new ArgumentException($"Color {data[2]} not found!");
             }
-
-            //if (context.Tags.Any(t => tags.Any(tag => tag != t.Name)))
-            //{
-            //    throw new ArgumentException("Invalid tags!");
-            //}
 
             if (tags.Except(context.Tags.Select(t => t.Name)).Any())
             {

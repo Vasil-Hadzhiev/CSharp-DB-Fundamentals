@@ -1,5 +1,6 @@
 ﻿namespace PhotoShare.Client.Core.Commands
 {
+    using PhotoShare.Client.Utilities;
     using PhotoShare.Data;
     using System;
     using System.Linq;
@@ -15,16 +16,26 @@
         // !!! Cannot change username
         public override string Execute(string[] data, PhotoShareContext context)
         {
+            if (Session.User == null)
+            {
+                throw new InvalidOperationException("Invalid credentials!");
+            }
+
             var username = data[0];
             var property = data[1];
             var newValue = data[2];
-
+           
             var currentUser = context.Users
                 .SingleOrDefault(u => u.Username == username);
 
             if (currentUser == null)
             {
                 throw new ArgumentException($"User {username} not found!");
+            }
+
+            if (!Checker.IsUserLoggedOn(currentUser))
+            {
+                throw new InvalidOperationException("Invalid credentials!");
             }
 
             var userProperties = currentUser.GetType()

@@ -10,8 +10,13 @@
         // AddTown <townName> <countryName>
         public override string Execute(string[] data, PhotoShareContext context)
         {
+            if (Session.User == null)
+            {
+                throw new InvalidOperationException("Invalid credentials!");
+            }
+
             var townName = data[0];
-            var countryName = data[1];
+            var countryName = data[1];         
 
             if (context.Towns.Any(t => t.Name == townName))
             {

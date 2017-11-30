@@ -11,6 +11,11 @@
         // AddTag <tag>
         public override string Execute(string[] data, PhotoShareContext context)
         {
+            if (Session.User == null)
+            {
+                throw new InvalidOperationException("Invalid credentials!");
+            }
+
             var tag = data[0].ValidateOrTransform();
 
             if (context.Tags.Any(t => t.Name == tag))

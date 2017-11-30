@@ -14,6 +14,11 @@
         // ShareAlbum 4 dragon11 Viewer
         public override string Execute(string[] data, PhotoShareContext context)
         {
+            if (Session.User == null)
+            {
+                throw new InvalidOperationException("Invalid credentials!");
+            }
+
             var albumId = int.Parse(data[0]);
 
             var album = context.Albums
@@ -52,16 +57,27 @@
             if (album.AlbumRoles.Any(r => r.UserId == user.Id && r.AlbumId == album.Id))
             {
                 var currentRole = album.AlbumRoles
-                    .Single(r => r.UserId == user.Id && r.AlbumId == album.Id).Role;
+                    .SingleOrDefault(r => r.UserId == user.Id && r.AlbumId == album.Id).Role;
 
                 throw new ArgumentException(
                     $"User {username} has already assigned {currentRole.ToString()} role to album {album.Name}.");
             }
 
+            //if (!album.AlbumRoles.Select(r => r.UserId).Contains(Session.User.Id)
+            //    || album.AlbumRoles.Single(r => r.UserId == Session.User.Id).Role != Role.Owner)
+            //{
+            //    throw new InvalidOperationException("Invalid credentials!");
+            //}
+
+            if (album.AlbumRoles.SingleOrDefault(r => r.UserId == Session.User.Id).Role != Role.Owner)
+            {
+                throw new InvalidOperationException("Invalid credentials!");
+            }
+
             album.AlbumRoles.Add(role);
             context.SaveChanges();
 
-            return $"Username {user.Username} added to album {album.Name} ({permissionRole.ToString()})";
+            return $"User {user.Username} added to album {album.Name} ({permissionRole.ToString()})";
         }
     }
 }

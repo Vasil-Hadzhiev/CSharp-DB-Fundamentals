@@ -12,6 +12,11 @@
         // AddTagTo <albumName> <tag>
         public override string Execute(string[] data, PhotoShareContext context)
         {
+            if (Session.User == null)
+            {
+                throw new InvalidOperationException("Invalid credentials!");
+            }
+
             var albumName = data[0];
             var tag = data[1].ValidateOrTransform();
 
@@ -31,6 +36,16 @@
             var currentTag = context.Tags
                 .SingleOrDefault(t => t.Name == tag);
 
+            if (!currentAlbum.AlbumRoles.Select(r => r.UserId).Contains(Session.User.Id)
+                || currentAlbum.AlbumRoles.Single(r => r.UserId == Session.User.Id).Role != Role.Owner)
+            {
+                throw new InvalidOperationException("Invalid credentials!");
+            }
+
+            //if (currentAlbum.AlbumRoles.SingleOrDefault(ar => ar.UserId == Session.User.Id).Role != Role.Owner)
+            //{
+            //    throw new InvalidOperationException("Invalid credentials!");
+            //}
 
             var currentAlbumTag = new AlbumTag
             {

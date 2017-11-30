@@ -8,7 +8,7 @@
         public override string Execute(string[] data, PhotoShareContext context)
         {
             Environment.Exit(0);
-            return "Good Bye!";
+            return "Good Bye!";         
         }
     }
 }

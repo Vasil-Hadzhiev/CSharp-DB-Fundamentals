@@ -1,6 +1,7 @@
 ﻿namespace PhotoShare.Client.Core.Commands
 {
     using Microsoft.EntityFrameworkCore;
+    using PhotoShare.Client.Utilities;
     using PhotoShare.Data;
     using PhotoShare.Models;
     using System;
@@ -11,6 +12,11 @@
         // AddFriend <username1> <username2>
         public override string Execute(string[] data, PhotoShareContext context)
         {
+            if (Session.User == null)
+            {
+                throw new InvalidOperationException("Invalid credentials!");
+            }
+
             var senderUsername = data[0];
             var receiverUsername = data[1];
 
@@ -20,10 +26,15 @@
                 .Include(u => u.AddedAsFriendBy)
                 .ThenInclude(f => f.Friend)
                 .SingleOrDefault(u => u.Username == senderUsername);
-
+           
             if (sender == null)
             {
                 throw new ArgumentException($"User {senderUsername} not found!");
+            }
+
+            if (!Checker.IsUserLoggedOn(sender))
+            {
+                throw new InvalidOperationException("Invalid credentials!");
             }
 
             var receiver = context.Users

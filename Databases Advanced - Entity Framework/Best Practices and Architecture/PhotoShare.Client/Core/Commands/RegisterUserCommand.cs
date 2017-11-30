@@ -10,6 +10,11 @@
         // RegisterUser <username> <password> <repeat-password> <email>
         public override string Execute(string[] data, PhotoShareContext context)
         {
+            if (Session.User != null)
+            {
+                throw new InvalidOperationException("Invalid credentials!");
+            }
+
             var username = data[0];
             var password = data[1];
             var repeatPassword = data[2];
