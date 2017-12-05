@@ -32,7 +32,308 @@
                 //GetCategoriesByProductsCountJson();
                 //GetUsersAndProductsJson();
                 //ImportUsersFromXml();
+                //ImportCategoriesFromXml();
+                //ImportProductsFromXml();
+                //ExportProductsInPriceRangeXml();
+                //ExportUsersWithSuccessfullySoldProductsXml();
+                //ExportCategoriesByProductXml();
+                //ExportUsersAndProductsXml();
             }
+        }
+
+        private static void ExportUsersAndProductsXml()
+        {
+            var context = new ProductsContext();
+
+            using (context)
+            {
+                var users = context.Users
+                    .Where(u => u.SoldProducts.Any())
+                    .OrderByDescending(u => u.SoldProducts.Count())
+                    .ThenBy(u => u.LastName)
+                    .Select(u => new
+                    {
+                        u.FirstName,
+                        u.LastName,
+                        u.Age,
+                        SoldProducts = new
+                        {
+                            Count = u.SoldProducts.Count(),
+                            Products = u.SoldProducts
+                                    .Select(p => new
+                                    {
+                                        p.Name,
+                                        p.Price
+                                    })
+                        }
+                    })
+                    .ToArray();
+
+                var document = new XDocument();
+
+                document.Add(
+                    new XElement("users",
+                        new XAttribute("count", users.Count())));
+
+                foreach (var user in users)
+                {
+                    document.Root.Add(
+                        new XElement("user",
+                            new XAttribute("first-name", $"{user.FirstName}"),
+                            new XAttribute("last-name", $"{user.LastName}"),
+                            new XAttribute("age", $"{user.Age}"),
+                                new XElement("sold-products",
+                                new XAttribute("count", $"{user.SoldProducts.Count}"))));
+
+                    var element = document.Root.Elements()
+                        .SingleOrDefault(e => 
+                            e.Name == "user" && 
+                            e.Attribute("first-name").Value == $"{user.FirstName}" && 
+                            e.Attribute("last-name").Value == $"{user.LastName}" && 
+                            e.Attribute("age").Value == $"{user.Age}")
+                        .Elements()
+                        .SingleOrDefault(e => e.Name == "sold-products");
+
+                    foreach (var p in user.SoldProducts.Products)
+                    {
+                        element.Add(
+                            new XElement("product",
+                                new XAttribute("name", $"{p.Name}"),
+                                new XAttribute("price", $"{p.Price}")));
+                    }
+                }
+
+                document.Save("Files/XMLExports/ExportsUsersAndProducts.xml");
+            }
+        }
+
+        private static void ExportCategoriesByProductXml()
+        {
+            var context = new ProductsContext();
+
+            using (context)
+            {
+                var categories = context.Categories
+                    .OrderBy(c => c.CategoryProducts.Select(cp => cp.ProductId).Count())
+                    .Select(c => new
+                    {
+                        c.Name,
+                        ProductsCount = c.CategoryProducts.Select(cp => cp.ProductId).Count(),
+                        AveragePrice = c.CategoryProducts.Select(cp => cp.Product.Price).Average(),
+                        TotalRevenue = c.CategoryProducts.Select(cp => cp.Product.Price).Sum(),
+                    })
+                    .ToArray();
+
+                var document = new XDocument();
+
+                document.Add(new XElement("categories"));
+
+                foreach (var category in categories)
+                {
+                    document.Root.Add(
+                        new XElement("category",
+                            new XAttribute("name", $"{category.Name}"),
+                                new XElement("products-count", $"{category.ProductsCount}"),
+                                new XElement("average-price", $"{category.AveragePrice}"),
+                                new XElement("total-revenue", $"{category.TotalRevenue}")));
+
+                }
+
+                document.Save("Files/XMLExports/CategoriesByProductsCount.xml");
+            }
+        }
+
+        private static void ExportUsersWithSuccessfullySoldProductsXml()
+        {
+            var context = new ProductsContext();
+
+            using (context)
+            {
+                var users = context.Users
+                    .Where(u => u.SoldProducts.Any())
+                    .OrderBy(u => u.LastName)
+                    .ThenBy(u => u.FirstName)
+                    .Select(u => new
+                    {
+                        u.FirstName,
+                        u.LastName,
+                        SoldProducts = u.SoldProducts
+                            .Select(sp => new
+                            {
+                                sp.Name,
+                                sp.Price
+                            })
+                    })
+                    .ToArray();
+
+                var document = new XDocument();
+
+                document.Add(new XElement("users"));
+
+                foreach (var user in users)
+                {
+                    document.Root.Add(
+                        new XElement("user",
+                        new XAttribute("first-name", $"{user.FirstName}"),
+                        new XAttribute("last-name", $"{user.LastName}"),
+                            new XElement("sold-products")));
+
+                    var products = document.Root.Elements()
+                        .SingleOrDefault(e =>
+                            e.Name == "user" &&
+                            e.Attribute("first-name").Value == $"{user.FirstName}" &&
+                            e.Attribute("last-name").Value == $"{user.LastName}")
+                            .Element("sold-products");
+
+                    foreach (var product in user.SoldProducts)
+                    {
+                        products
+                            .Add(
+                                 new XElement("product",
+                                 new XElement("name", $"${product.Name}"),
+                                 new XElement("price", $"{product.Price}")));
+                    }
+                }
+
+                document.Save("Files/XMLExports/SoldProducts.xml");
+            }
+        }
+
+        private static void ExportProductsInPriceRangeXml()
+        {
+            var context = new ProductsContext();
+
+            using (context)
+            {
+                var products = context.Products
+                    .Where(p => p.Price >= 1000 && p.Price <= 2000)
+                    .OrderBy(p => p.Price)
+                    .Select(p => new
+                    {
+                        p.Name,
+                        p.Price,
+                        BuyerName = $"{p.Buyer.FirstName} {p.Buyer.LastName}"
+                    })
+                    .ToArray();
+
+                var document = new XDocument();
+
+                document.Add(new XElement("products"));
+
+                foreach (var product in products)
+                {
+                    document.Root.Add(
+                        new XElement("product",
+                            new XAttribute("name", $"{product.Name}"),
+                            new XAttribute("price", $"{product.Price}"),
+                            new XAttribute("buyer", $"{product.BuyerName}")));
+                }
+
+                document.Save("Files/XMLExports/ProductsInRange.xml");
+            }
+        }
+
+        private static void ImportProductsFromXml()
+        {
+            var xmlString = File.ReadAllText("Files/products.xml");
+
+            var xmlDoc = XDocument.Parse(xmlString);
+
+            var elements = xmlDoc.Root.Elements();
+
+            var context = new ProductsContext();
+
+            using (context)
+            {
+                var categoryProducts = new List<CategoryProduct>();
+
+                var userIds = context.Users
+                    .Select(u => u.Id)
+                    .ToArray();
+
+                var categoryIds = context.Categories
+                    .Select(c => c.Id)
+                    .ToArray();
+
+                var rnd = new Random();
+
+                foreach (var e in elements)
+                {
+                    var name = e.Element("name").Value;
+                    var price = decimal.Parse(e.Element("price").Value);
+
+                    var sellerIndex = rnd.Next(0, userIds.Length);
+                    var sellerId = userIds[sellerIndex];
+
+                    var product = new Product
+                    {
+                        Name = name,
+                        Price = price,
+                        SellerId = sellerId
+                    };
+
+                    var categoryIndex = rnd.Next(0, categoryIds.Length);
+                    var categoryId = userIds[categoryIndex];
+
+                    var categoryProduct = new CategoryProduct
+                    {
+                        Product = product,
+                        CategoryId = categoryId
+                    };
+
+                    categoryProducts.Add(categoryProduct);
+                }
+
+                context.CategoryProducts.AddRange(categoryProducts);
+                context.SaveChanges();
+
+                var productBuyers = context.Products.ToArray();
+
+                for (int i = 0; i < productBuyers.Length / 2; i++)
+                {
+                    var currentProduct = productBuyers[i];
+
+                    var buyerIndex = rnd.Next(0, userIds.Length);
+                    var buyerId = userIds[buyerIndex];
+
+                    while (currentProduct.SellerId == buyerId)
+                    {
+                        buyerIndex = rnd.Next(0, userIds.Length);
+                        buyerId = userIds[buyerIndex];
+                    }
+
+                    currentProduct.BuyerId = buyerId;
+                }
+
+                context.SaveChanges();
+            }
+        }
+
+        private static void ImportCategoriesFromXml()
+        {
+            var xmlString = File.ReadAllText("Files/categories.xml");
+
+            var xmlDoc = XDocument.Parse(xmlString);
+
+            var elements = xmlDoc.Root.Elements();
+
+            var categories = new List<Category>();
+
+            foreach (var e in elements)
+            {
+                var category = new Category
+                {
+                    Name = e.Element("name").Value
+                };
+
+                categories.Add(category);
+            }
+
+            var context = new ProductsContext();
+
+            context.Categories.AddRange(categories);
+
+            context.SaveChanges();
         }
 
         private static void ImportUsersFromXml()
@@ -71,7 +372,7 @@
 
             using (context)
             {
-                context.AddRange(users);
+                context.Users.AddRange(users);
                 context.SaveChanges();
             }
         }
