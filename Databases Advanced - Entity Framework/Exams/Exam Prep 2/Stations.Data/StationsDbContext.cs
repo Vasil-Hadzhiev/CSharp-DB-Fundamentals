@@ -1,9 +1,9 @@
-﻿namespace Stations.Data
-{
-    using Microsoft.EntityFrameworkCore;
-    using Stations.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using Stations.Models;
 
-    public class StationsDbContext : DbContext
+namespace Stations.Data
+{
+	public class StationsDbContext : DbContext
 	{
 		public StationsDbContext()
 		{
@@ -14,21 +14,21 @@
 		{
 		}
 
-        public DbSet<Station> Stations { get; set; }
+		public DbSet<Station> Stations { get; set; }
 
-        public DbSet<Train> Trains { get; set; }
+		public DbSet<Train> Trains { get; set; }
 
-        public DbSet<SeatingClass> SeatingClasses { get; set; }
+		public DbSet<SeatingClass> SeatingClasses { get; set; }
 
-        public DbSet<TrainSeat> TrainSeats { get; set; }
+		public DbSet<TrainSeat> TrainSeats { get; set; }
 
-        public DbSet<Trip> Trips { get; set; }
+		public DbSet<Trip> Trips { get; set; }
 
-        public DbSet<Ticket> Tickets { get; set; }
+		public DbSet<Ticket> Tickets { get; set; }
 
-        public DbSet<CustomerCard> Cards { get; set; }
+		public DbSet<CustomerCard> Cards { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 		{
 			if (!optionsBuilder.IsConfigured)
 			{
@@ -36,28 +36,28 @@
 			}
 		}
 
-		protected override void OnModelCreating(ModelBuilder modelBuilder)
+		protected override void OnModelCreating(ModelBuilder builder)
 		{
-            modelBuilder.Entity<Station>()
-                .HasAlternateKey(s => s.Name);
+			builder.Entity<Station>()
+				.HasAlternateKey(s => s.Name);
 
-            modelBuilder.Entity<Train>()
-                .HasAlternateKey(t => t.TrainNumber);
+			builder.Entity<Train>()
+				.HasAlternateKey(t => t.TrainNumber);
 
-            modelBuilder.Entity<SeatingClass>()
-                .HasAlternateKey(sc => new { sc.Name, sc.Abbreviation });
+			builder.Entity<SeatingClass>()
+				.HasAlternateKey(sc => new { sc.Name, sc.Abbreviation });
 
-            modelBuilder.Entity<Station>()
-                .HasMany(s => s.TripsTo)
-                .WithOne(t => t.DestinationStation)
-                .HasForeignKey(t => t.DestinationStationId)
-                .OnDelete(DeleteBehavior.Restrict);
+			builder.Entity<Station>()
+				.HasMany(s => s.TripsTo)
+				.WithOne(t => t.DestinationStation)
+				.HasForeignKey(t => t.DestinationStationId)
+				.OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<Station>()
-                .HasMany(s => s.TripsFrom)
-                .WithOne(t => t.OriginStation)
-                .HasForeignKey(t => t.OriginStationId)
-                .OnDelete(DeleteBehavior.Restrict);
-        }
+			builder.Entity<Station>()
+				.HasMany(s => s.TripsFrom)
+				.WithOne(t => t.OriginStation)
+				.HasForeignKey(t => t.OriginStationId)
+				.OnDelete(DeleteBehavior.Restrict);
+		}
 	}
 }

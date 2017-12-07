@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Data.SqlClient;
 using System.IO;
 using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using Stations.Data;
 
 namespace Stations.App
@@ -27,8 +29,6 @@ namespace Stations.App
 			var stations = DataProcessor.Deserializer.ImportStations(context, File.ReadAllText(baseDir + "stations.json"));
 			PrintAndExportEntityToFile(stations, exportDir + "Stations.txt");
 
-            Environment.Exit(0);
-
 			var classes = DataProcessor.Deserializer.ImportClasses(context, File.ReadAllText(baseDir + "classes.json"));
 			PrintAndExportEntityToFile(classes, exportDir + "Classes.txt");
 
@@ -53,7 +53,7 @@ namespace Stations.App
 			Console.WriteLine(jsonOutput);
 			File.WriteAllText(exportDir + "DelayedTrains.json", jsonOutput);
 
-			var xmlOutput = DataProcessor.Serializer.ExportCardsTicket(context, "Elder");
+			var xmlOutput = DataProcessor.Serializer.ExportCardsTicket(context, "Debilitated");
 			Console.WriteLine(xmlOutput);
 			File.WriteAllText(exportDir + "CardsTicket.xml", xmlOutput);
 		}
@@ -64,10 +64,33 @@ namespace Stations.App
 			File.WriteAllText(outputPath, entityOutput.TrimEnd());
 		}
 
-		private static void ResetDatabase(StationsDbContext context)
+		private static void ResetDatabase(StationsDbContext context, bool shouldDeleteDatabase = false)
 		{
-			context.Database.EnsureDeleted();
+			if (shouldDeleteDatabase)
+			{
+				context.Database.EnsureDeleted();
+				context.Database.EnsureCreated();
+			}
+
 			context.Database.EnsureCreated();
+
+			var disableIntegrityChecksQuery = "EXEC sp_MSforeachtable @command1='ALTER TABLE ? NOCHECK CONSTRAINT ALL'";
+			context.Database.ExecuteSqlCommand(disableIntegrityChecksQuery);
+
+			var deleteRowsQuery = "EXEC sp_MSforeachtable @command1='DELETE FROM ?'";
+			context.Database.ExecuteSqlCommand(deleteRowsQuery);
+
+			var enableIntegrityChecksQuery = "EXEC sp_MSforeachtable @command1='ALTER TABLE ? WITH CHECK CHECK CONSTRAINT ALL'";
+			context.Database.ExecuteSqlCommand(enableIntegrityChecksQuery);
+
+			var reseedQuery = "EXEC sp_MSforeachtable @command1='DBCC CHECKIDENT(''?'', RESEED, 0)'";
+			try
+			{
+				context.Database.ExecuteSqlCommand(reseedQuery);
+			}
+			catch (SqlException) // OrderItems table has no identity column, which isn't a problem
+			{
+			}
 		}
 	}
 }
