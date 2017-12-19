@@ -1,10 +1,15 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-
-namespace FastFood.Models
+﻿namespace FastFood.Models
 {
+    using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
+
     public class Item
     {
+        public Item()
+        {
+            this.OrderItems = new List<OrderItem>();
+        }
+
         public int Id { get; set; }
 
         [Required]
@@ -20,6 +25,6 @@ namespace FastFood.Models
         [Range(typeof(decimal), "0.01", "79228162514264337593543950335")]
         public decimal Price { get; set; }
 
-        public ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
+        public ICollection<OrderItem> OrderItems { get; set; }
     }
 }

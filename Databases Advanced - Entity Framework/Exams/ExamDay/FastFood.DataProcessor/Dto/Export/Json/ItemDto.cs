@@ -1,6 +1,6 @@
 ﻿namespace FastFood.DataProcessor.Dto.Export.Json
 {
-   public class ItemDto
+    public class ItemDto
     {
         public string Name { get; set; }
 

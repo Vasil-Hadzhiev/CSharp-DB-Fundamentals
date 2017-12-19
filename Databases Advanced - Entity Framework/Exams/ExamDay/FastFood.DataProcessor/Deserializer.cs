@@ -1,26 +1,27 @@
-﻿using System;
-using FastFood.Data;
-using Newtonsoft.Json;
-using FastFood.DataProcessor.Dto.Import;
-using System.Text;
-using FastFood.Models;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Xml.Serialization;
-using System.IO;
-using System.Globalization;
-using FastFood.Models.Enums;
-
-namespace FastFood.DataProcessor
+﻿namespace FastFood.DataProcessor
 {
-	public static class Deserializer
-	{
-		private const string FailureMessage = "Invalid data format.";
-		private const string SuccessMessage = "Record {0} successfully imported.";
+    using System;   
+    using Newtonsoft.Json;    
+    using System.Text;    
+    using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
+    using System.Linq;
+    using System.Xml.Serialization;
+    using System.IO;
+    using System.Globalization;
 
-		public static string ImportEmployees(FastFoodDbContext context, string jsonString)
-		{
+    using FastFood.DataProcessor.Dto.Import;
+    using FastFood.Models.Enums;
+    using FastFood.Models;
+    using FastFood.Data;
+
+    public static class Deserializer
+    {
+        private const string FailureMessage = "Invalid data format.";
+        private const string SuccessMessage = "Record {0} successfully imported.";
+
+        public static string ImportEmployees(FastFoodDbContext context, string jsonString)
+        {
             var deserializedEmployees = JsonConvert.DeserializeObject<EmployeeDto[]>(jsonString);
 
             var sb = new StringBuilder();
@@ -67,10 +68,10 @@ namespace FastFood.DataProcessor
             var result = sb.ToString();
 
             return result;
-		}
+        }
 
-		public static string ImportItems(FastFoodDbContext context, string jsonString)
-		{
+        public static string ImportItems(FastFoodDbContext context, string jsonString)
+        {
             var deserializedItems = JsonConvert.DeserializeObject<ItemDto[]>(jsonString);
 
             var sb = new StringBuilder();
@@ -128,8 +129,8 @@ namespace FastFood.DataProcessor
             return result;
         }
 
-		public static string ImportOrders(FastFoodDbContext context, string xmlString)
-		{
+        public static string ImportOrders(FastFoodDbContext context, string xmlString)
+        {
             var serializer = new XmlSerializer(typeof(OrderDto[]), new XmlRootAttribute("Orders"));
             var deserializedOrders = (OrderDto[])serializer.Deserialize(new MemoryStream(Encoding.UTF8.GetBytes(xmlString)));
 
@@ -202,7 +203,7 @@ namespace FastFood.DataProcessor
                         };
 
                         orderItems.Add(orderItem);
-                    }                   
+                    }
                 }
 
                 var date = DateTime.ParseExact(orderDto.DateTime, "dd/MM/yyyy HH:mm", CultureInfo.InvariantCulture);
@@ -242,7 +243,7 @@ namespace FastFood.DataProcessor
         {
             var validationContext = new ValidationContext(obj);
             var validationResults = new List<ValidationResult>();
-            
+
             var isValid = Validator.TryValidateObject(obj, validationContext, validationResults, true);
             return isValid;
         }

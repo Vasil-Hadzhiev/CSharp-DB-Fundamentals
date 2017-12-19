@@ -1,15 +1,12 @@
-﻿using System;
-using System.Data.SqlClient;
-using System.IO;
-using AutoMapper;
-using FastFood.Data;
-using FastFood.DataProcessor;
-using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
-
-namespace FastFood.App
+﻿namespace FastFood.App
 {
-	public class Startup
+    using System;
+    using System.IO;
+    using AutoMapper;
+
+    using FastFood.Data;
+
+    public class Startup
 	{
 		public static void Main(string[] args)
 		{

@@ -1,13 +1,19 @@
-﻿using FastFood.Models.Enums;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace FastFood.Models
+﻿namespace FastFood.Models
 {
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
+
+    using FastFood.Models.Enums;
+
     public class Order
     {
+        public Order()
+        {
+            this.OrderItems = new List<OrderItem>();
+        }
+
         public int Id { get; set; }
 
         [Required]
@@ -19,7 +25,6 @@ namespace FastFood.Models
         [Required]
         public OrderType Type { get; set; }
 
-        [Required]
         [NotMapped]
         public decimal TotalPrice { get; set; }
 
@@ -28,6 +33,6 @@ namespace FastFood.Models
         [Required]
         public Employee Employee { get; set; }
 
-        public ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
+        public ICollection<OrderItem> OrderItems { get; set; } 
     }
 }

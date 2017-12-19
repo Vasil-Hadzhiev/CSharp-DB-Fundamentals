@@ -1,10 +1,10 @@
-﻿using System;
-using FastFood.Data;
-using System.Linq;
-using System.Text;
-
-namespace FastFood.DataProcessor
+﻿namespace FastFood.DataProcessor
 {
+    using System.Linq;
+    using System.Text;
+
+    using FastFood.Data;
+
     public static class Bonus
     {
 	    public static string UpdatePrice(FastFoodDbContext context, string itemName, decimal newPrice)

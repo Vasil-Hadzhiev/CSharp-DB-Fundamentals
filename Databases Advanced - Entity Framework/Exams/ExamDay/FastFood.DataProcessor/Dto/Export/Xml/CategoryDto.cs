@@ -1,11 +1,10 @@
-﻿using System.Xml.Serialization;
-
-namespace FastFood.DataProcessor.Dto.Export.Xml
+﻿namespace FastFood.DataProcessor.Dto.Export.Xml
 {
+    using System.Xml.Serialization;
+
     [XmlType("Category")]
     public class CategoryDto
     {
-        [XmlElement("Name")]
         public string Name { get; set; }
 
         public MostPopularItemDto MostPopularItem { get; set; }

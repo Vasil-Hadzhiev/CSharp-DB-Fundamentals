@@ -1,9 +1,10 @@
-﻿using FastFood.Models;
-using Microsoft.EntityFrameworkCore;
-
-namespace FastFood.Data
+﻿namespace FastFood.Data
 {
-	public class FastFoodDbContext : DbContext
+    using Microsoft.EntityFrameworkCore;
+
+    using FastFood.Models;
+
+    public class FastFoodDbContext : DbContext
 	{
 		public FastFoodDbContext()
 		{
@@ -15,10 +16,15 @@ namespace FastFood.Data
 		}
 
         public DbSet<Category> Categories { get; set; }
+
         public DbSet<Employee> Employees { get; set; }
+
         public DbSet<Item> Items { get; set; }
+
         public DbSet<Order> Orders { get; set; }
+
         public DbSet<OrderItem> OrderItems { get; set; }
+
         public DbSet<Position> Positions { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder builder)

@@ -1,10 +1,15 @@
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-
 namespace FastFood.Models
 {
-	public class Employee
+    using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
+
+    public class Employee
 	{
+        public Employee()
+        {
+            this.Orders = new List<Order>();
+        }
+
         public int Id { get; set; }
 
         [Required]
@@ -20,6 +25,6 @@ namespace FastFood.Models
         [Required]
         public Position Position { get; set; }
 
-        public ICollection<Order> Orders { get; set; } = new List<Order>();
+        public ICollection<Order> Orders { get; set; }
     }
 }

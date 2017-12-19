@@ -1,7 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace FastFood.DataProcessor.Dto.Import
+﻿namespace FastFood.DataProcessor.Dto.Import
 {
+    using System.ComponentModel.DataAnnotations;
+
     public class EmployeeDto
     {
         [Required]
